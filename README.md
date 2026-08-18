@@ -33,6 +33,8 @@ Prerequisites: Docker, `kind`, `kubectl`, and Helm 3.
 make cluster
 make validate
 make install
+make metrics-server
+make observability
 kubectl -n platform-lab port-forward service/platform-demo 8080:80
 ```
 
@@ -45,7 +47,13 @@ make argocd
 kubectl apply -f gitops/application.yaml
 ```
 
-The Argo CD application tracks `main` and deploys the Helm chart into `platform-lab`. For a fork, update `repoURL` in `gitops/application.yaml`.
+The Argo CD application tracks `main` and deploys the Helm chart into `platform-lab`. For a fork, update `repoURL` in `gitops/application.yaml`. Argo CD is pinned in the `Makefile` to make the bootstrap repeatable.
+
+## Observability
+
+`make observability` installs a pinned kube-prometheus-stack release and deploys a hardened Blackbox Exporter. A Prometheus `Probe` checks the in-cluster service every 30 seconds, while the supplied rules calculate availability and raise `PlatformDemoUnavailable` after five minutes of failed probes. Grafana is included by kube-prometheus-stack.
+
+`make metrics-server` installs a pinned Metrics Server release with the local-kind TLS compatibility flag, enabling the chart's CPU-based HPA.
 
 ## Reliability target
 
