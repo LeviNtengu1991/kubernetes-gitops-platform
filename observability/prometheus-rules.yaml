@@ -3,6 +3,8 @@ kind: PrometheusRule
 metadata:
   name: platform-demo-slo
   namespace: platform-lab
+  labels:
+    app.kubernetes.io/part-of: platform-demo
 spec:
   groups:
     - name: platform-demo.availability
