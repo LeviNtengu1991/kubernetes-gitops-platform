@@ -24,7 +24,7 @@ jobs:
         with:
           args: "-strict -summary -ignore-missing-schemas rendered.yaml gitops/application.yaml observability/blackbox.yaml observability/prometheus-rules.yaml policies/require-secure-pod.yaml"
       - name: Scan configuration
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: config
           scan-ref: .
