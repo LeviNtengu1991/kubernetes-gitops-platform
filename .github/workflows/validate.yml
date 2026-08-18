@@ -1,0 +1,32 @@
+name: Validate platform
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: azure/setup-helm@v4
+      - name: Lint Helm chart
+        run: helm lint charts/platform-demo --strict
+      - name: Render manifests
+        run: helm template platform-demo charts/platform-demo --namespace platform-lab > rendered.yaml
+      - name: Validate Kubernetes schemas
+        uses: docker://ghcr.io/yannh/kubeconform:v0.6.7
+        with:
+          args: "-strict -summary -ignore-missing-schemas rendered.yaml gitops/application.yaml observability/prometheus-rules.yaml policies/require-secure-pod.yaml"
+      - name: Scan configuration
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: config
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: "1"
