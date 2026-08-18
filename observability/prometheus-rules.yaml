@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: platform-demo-slo
+  namespace: platform-lab
+spec:
+  groups:
+    - name: platform-demo.availability
+      rules:
+        - alert: PlatformDemoUnavailable
+          expr: probe_success{job="platform-demo"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Platform demo endpoint is unavailable
+            runbook_url: https://github.com/LeviNtengu1991/kubernetes-gitops-platform/blob/main/docs/runbooks/endpoint-unavailable.md
+        - record: platform_demo:availability:ratio30d
+          expr: avg_over_time(probe_success{job="platform-demo"}[30d])
