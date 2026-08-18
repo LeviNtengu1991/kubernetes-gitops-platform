@@ -22,9 +22,9 @@ jobs:
       - name: Validate Kubernetes schemas
         uses: docker://ghcr.io/yannh/kubeconform:v0.6.7
         with:
-          args: "-strict -summary -ignore-missing-schemas rendered.yaml gitops/application.yaml observability/prometheus-rules.yaml policies/require-secure-pod.yaml"
+          args: "-strict -summary -ignore-missing-schemas rendered.yaml gitops/application.yaml observability/blackbox.yaml observability/prometheus-rules.yaml policies/require-secure-pod.yaml"
       - name: Scan configuration
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: config
           scan-ref: .
