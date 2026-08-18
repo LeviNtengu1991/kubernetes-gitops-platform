@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-secure-pod-settings
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: require-non-root-and-no-privilege-escalation
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      validate:
+        message: Workloads must run as non-root and block privilege escalation.
+        pattern:
+          spec:
+            securityContext:
+              runAsNonRoot: true
+            containers:
+              - securityContext:
+                  allowPrivilegeEscalation: false
